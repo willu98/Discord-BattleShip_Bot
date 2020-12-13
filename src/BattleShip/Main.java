@@ -12,13 +12,14 @@ import net.dv8tion.jda.api.entities.Activity;
 
 public class Main {
 	public static String prefix = "~";
+	private static Player players[] = new Player[2];
+	private final static String DISCORD_API_KEY = "Nzg2ODEyNjczMzk2MDQ3ODcy.X9L2Zw.H-bexPI6ROFnxz9zrhlXGOCSDcM";
 	
-
 	public static void main(String[] args) {	
+		
 		JDA jda = null;
 		JDABuilder builder = null;
-		
-		builder = JDABuilder.createDefault("Nzg2ODEyNjczMzk2MDQ3ODcy.X9L2Zw.htuzU5cxFRDOIqvbJE-CGny81Z0");
+		builder = JDABuilder.createDefault(DISCORD_API_KEY);
 
 		Commands listener = new Commands();
 		try {
