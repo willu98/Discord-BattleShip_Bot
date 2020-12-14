@@ -1,10 +1,16 @@
 package BattleShip;
 
+import java.util.List;
+
 import javax.security.auth.login.LoginException;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 
 
@@ -12,30 +18,33 @@ import net.dv8tion.jda.api.entities.Activity;
 
 public class Main {
 	public static String prefix = "~";
-	private static Player players[] = new Player[2];
 	private final static String DISCORD_API_KEY = "Nzg2ODEyNjczMzk2MDQ3ODcy.X9L2Zw.H-bexPI6ROFnxz9zrhlXGOCSDcM";
+	private static JDA jda = null;
+	private static JDABuilder builder = JDABuilder.createDefault(DISCORD_API_KEY);
 	
 	public static void main(String[] args) {	
 		
-		JDA jda = null;
-		JDABuilder builder = null;
-		builder = JDABuilder.createDefault(DISCORD_API_KEY);
 
-		Commands listener = new Commands();
+
+		//adding a listener
 		try {
-			builder.addEventListeners(listener);
+			builder.addEventListeners(new Commands());
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		
-	
+		//building JDA
 		try {
-			jda = builder.build();
+			jda = builder.setChunkingFilter(ChunkingFilter.ALL) // enable member chunking for all guilds
+			          .setMemberCachePolicy(MemberCachePolicy.ALL) // ignored if chunking enabled
+			          .enableIntents(GatewayIntent.GUILD_MEMBERS)
+			          .build();
 		}catch(LoginException e) {
 			e.printStackTrace();
 		}
+
 		
-		jda.getPresence().setPresence(Activity.watching("Finding GPUs"), true);
+		jda.getPresence().setPresence(Activity.playing("Battleship"), true);
 
 	}	
 }
