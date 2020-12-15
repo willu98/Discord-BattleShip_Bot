@@ -1,5 +1,6 @@
 package BattleShip;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -7,6 +8,7 @@ import java.util.regex.Pattern;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
@@ -20,13 +22,12 @@ public class Commands extends ListenerAdapter{
 		//event.getChannel().sendTyping().queue();
 		event.getChannel().sendMessage("YO").queue();
     }*/
-	private static Game game;
-	private static Player players[] = new Player[2];
-	private static Long inviteId;
-	
+	private Game game;
+	private Player players[] = new Player[2];
+	private Long inviteId;
+	private final String emotes[] = {"1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟","🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯"};
 	//change later
 	private static int invEmoteCounter[] = {0,0, 0};
-	private static int coordCounter[] = new int [20];
 	
 	private static enum States{
 		IDLE,
@@ -133,60 +134,28 @@ public class Commands extends ListenerAdapter{
 					players[0].getUserObj().openPrivateChannel().flatMap(channel -> channel.sendMessage(acceptInvite.build())).queue();
 					
 					players[0].getUserObj().openPrivateChannel().flatMap(channel -> channel.sendMessage(game.generateBoards(players[0], players[1]))).queue(message -> {
-						message.addReaction("1️⃣").queue();
-						message.addReaction("2️⃣").queue();
-						message.addReaction("3️⃣").queue();
-						message.addReaction("4️⃣").queue();
-						message.addReaction("5️⃣").queue();
-						message.addReaction("6️⃣").queue();
-						message.addReaction("7️⃣").queue();
-						message.addReaction("8️⃣").queue();
-						message.addReaction("9️⃣").queue();
-						message.addReaction("🔟").queue();
-						message.addReaction("🇦").queue();
-						message.addReaction("🇧").queue();
-						message.addReaction("🇨").queue();
-						message.addReaction("🇩").queue();
-						message.addReaction("🇪").queue();
-						message.addReaction("🇫").queue();
-						message.addReaction("🇬").queue();
-						message.addReaction("🇭").queue();
-						message.addReaction("🇮").queue();
-						message.addReaction("🇯").queue();
+						for(int i = 0; i < emotes.length; i++) {
+							message.addReaction(emotes[i]).queue();
+						}
 						players[0].setGameMsgID(message.getIdLong(), 0);
 					});
 					
 					players[0].getUserObj().openPrivateChannel().flatMap(channel -> channel.sendMessage(new EmbedBuilder().setDescription("Select the coordinates you would like to attack and click ✅").build())).queue(message -> {
 						message.addReaction("✅").queue();
+						players[0].setTextChannel(message.getPrivateChannel().getIdLong());
 						players[0].setGameMsgID(message.getIdLong(), 1);
 					});
 					
 					players[1].getUserObj().openPrivateChannel().flatMap(channel -> channel.sendMessage(game.generateBoards(players[1], players[0]))).queue(message -> {
-						message.addReaction("1️⃣").queue();
-						message.addReaction("2️⃣").queue();
-						message.addReaction("3️⃣").queue();
-						message.addReaction("4️⃣").queue();
-						message.addReaction("5️⃣").queue();
-						message.addReaction("6️⃣").queue();
-						message.addReaction("7️⃣").queue();
-						message.addReaction("8️⃣").queue();
-						message.addReaction("9️⃣").queue();
-						message.addReaction("🔟").queue();
-						message.addReaction("🇦").queue();
-						message.addReaction("🇧").queue();
-						message.addReaction("🇨").queue();
-						message.addReaction("🇩").queue();
-						message.addReaction("🇪").queue();
-						message.addReaction("🇫").queue();
-						message.addReaction("🇬").queue();
-						message.addReaction("🇭").queue();
-						message.addReaction("🇮").queue();
-						message.addReaction("🇯").queue();
+						for(int i = 0; i < emotes.length; i++) {
+							message.addReaction(emotes[i]).queue();
+						}
 						players[1].setGameMsgID(message.getIdLong(), 0);
 					});
 					
 					players[1].getUserObj().openPrivateChannel().flatMap(channel -> channel.sendMessage(new EmbedBuilder().setDescription("Select the coordinates you would like to attack and click ✅").build())).queue(message -> {
 						message.addReaction("✅").queue();
+						players[1].setTextChannel(message.getPrivateChannel().getIdLong());
 						players[1].setGameMsgID(message.getIdLong(), 1);
 						curr = States.GAME;
 					});										
@@ -204,7 +173,28 @@ public class Commands extends ListenerAdapter{
 			//
 			if(event.getMessageIdLong() == players[game.getTurn()].getMsgID(1) && event.getReactionEmote().getEmoji().equals("✅")) {
 				if(event.getChannel().retrieveMessageById(event.getMessageId()).complete().getReactions().get(0).getCount() > 1){
+					List<MessageReaction> playerChoice = event.getChannel().retrieveMessageById(players[game.getTurn()].getMsgID(0)).complete().getReactions();
+					int posX = 0;
+					int posY = 0;
+					int xCount = 0;
+					int yCount= 0;
+					for(int i = 0; i < 20; i++) {
+						if (playerChoice.get(i).getCount() > 1 && i < 10) {
+							posX = i;
+							xCount++;
+						}
+						else if(playerChoice.get(i).getCount() > 1 && i < 20) {
+							posY = i - 10;
+							yCount++;
+						}
+					}
 					
+					if(xCount == 1 && yCount == 1) {
+						players[(game.getTurn() - 1) * -1].doTurn(posX, posY);
+						game.flipTurn();
+						event.getChannel().retrieveMessageById(players[(game.getTurn() - 1) * -1].getMsgID(0)).complete().editMessage(game.generateBoards(players[(game.getTurn() - 1) * -1], players[game.getTurn()])).complete();
+						Main.jda.getPrivateChannelById(players[game.getTurn()].getTextChannel()).retrieveMessageById(players[game.getTurn()].getMsgID(0)).complete().editMessage(game.generateBoards(players[game.getTurn()], players[(game.getTurn() - 1) * -1])).complete();
+					}
 				}
 			}
 			

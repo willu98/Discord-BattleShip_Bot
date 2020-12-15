@@ -16,11 +16,11 @@ public class Ship {
 		return length;
 	}
 	public int getOrientation() {
-		return posX;
+		return orientation;
 	}
 	
 	public int getPosX() {
-		return orientation;
+		return posX;
 	}
 	
 	public int getPosY() {
