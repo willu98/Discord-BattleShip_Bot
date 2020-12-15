@@ -19,7 +19,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 public class Main {
 	public static String prefix = "~";
 	private final static String DISCORD_API_KEY = "Nzg2ODEyNjczMzk2MDQ3ODcy.X9L2Zw.H-bexPI6ROFnxz9zrhlXGOCSDcM";
-	private static JDA jda = null;
+	public static JDA jda = null;
 	private static JDABuilder builder = JDABuilder.createDefault(DISCORD_API_KEY);
 	
 	public static void main(String[] args) {	
@@ -37,7 +37,7 @@ public class Main {
 		try {
 			jda = builder.setChunkingFilter(ChunkingFilter.ALL) // enable member chunking for all guilds
 			          .setMemberCachePolicy(MemberCachePolicy.ALL) // ignored if chunking enabled
-			          .enableIntents(GatewayIntent.GUILD_MEMBERS)
+			          .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGE_REACTIONS, GatewayIntent.DIRECT_MESSAGES)
 			          .build();
 		}catch(LoginException e) {
 			e.printStackTrace();
