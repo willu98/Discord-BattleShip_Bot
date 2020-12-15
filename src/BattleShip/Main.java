@@ -19,7 +19,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 public class Main {
 	public static String prefix = "~";
 	public static JDA jda = null;
-	private static JDABuilder builder = JDABuilder.createDefault(Key.DISCORD_API_KEY);
+	private static JDABuilder builder = JDABuilder.createDefault(Key.out());
 	
 	public static void main(String[] args) {	
 		
