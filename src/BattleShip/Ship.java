@@ -1,8 +1,13 @@
 package BattleShip;
 
 public class Ship {
+	//length of ship
 	private int length;
+	
+	//orientation of ship, 0=>horizontal and 1=>vertical
 	private int orientation;
+	
+	//x and y position of the ship
 	private int posX;
 	private int posY;
 	
