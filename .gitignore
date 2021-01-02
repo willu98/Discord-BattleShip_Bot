@@ -1,4 +1,7 @@
 
 bin/BattleShip/Key.class
-
 src/BattleShip/Key.java
+
+bin/*
+.settings
+.project
